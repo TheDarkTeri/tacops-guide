@@ -1,5 +1,6 @@
 """Turns the generated guide page into a standalone GitHub Pages site: index.html, a link-preview image and a favicon.
 Run after gen_guide.py: py build_site.py <folder holding tacops-survival-guide.html and icons/> <site folder>"""
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -18,6 +19,8 @@ SITE.mkdir(parents=True, exist_ok=True)
 # The page: the guide is written as a fragment for an Artifact (title, links and styles, then the body), so give it the
 # document around it, with the small reset the Artifact host supplied
 page = (SRC / "tacops-survival-guide.html").read_text(encoding="utf-8")
+# The version the guide's for, as the page gives it
+VERSION = re.search(r"TacOps (\S+) · Minecraft", page).group(1)
 split = page.index('<header class="hero">')
 head, body = page[:split], page[split:]
 head = head.replace('<title>TacOps Survival Guide</title>\n', "").replace('<meta name="claude:viewport-fit-sides" content="cover">\n', "")
@@ -69,7 +72,7 @@ def font(size, weight):
     return f
 
 
-draw.text((80, 92), "TACOPS 1.2.0  ·  MINECRAFT 26.3  ·  FABRIC", font=font(26, "SemiBold"), fill=muted)
+draw.text((80, 92), f"TACOPS {VERSION}  ·  MINECRAFT 26.3  ·  FABRIC", font=font(26, "SemiBold"), fill=muted)
 draw.text((76, 136), "Survival Guide", font=font(104, "Bold"), fill=ink)
 draw.rectangle((80, 268, 200, 274), fill=accent)
 draw.text((80, 300), "Every recipe, every material, and how to", font=font(36, "Regular"), fill=muted)
@@ -125,5 +128,8 @@ Pillow, from this repository:
 py tools/gen_guide.py <path to the TacOps mod project> tools
 py tools/build_site.py tools .
 ```
+
+What's in the next TacOps release shows as "Coming soon" until it's out: see `VERSION` and `COMING_SOON` at the top of
+`tools/gen_guide.py`.
 ''', encoding="utf-8", newline="\n")
 print("built", SITE, sorted(p.name for p in SITE.iterdir()))

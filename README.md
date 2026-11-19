@@ -14,3 +14,6 @@ Pillow, from this repository:
 py tools/gen_guide.py <path to the TacOps mod project> tools
 py tools/build_site.py tools .
 ```
+
+What's in the next TacOps release shows as "Coming soon" until it's out: see `VERSION` and `COMING_SOON` at the top of
+`tools/gen_guide.py`.

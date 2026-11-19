@@ -11,6 +11,14 @@ from PIL import Image
 
 ROOT = Path(sys.argv[1])
 SP = Path(sys.argv[2])
+
+# The TacOps version that's out, and the next one. What's only in the next one is in the guide already, marked "Coming
+# soon": the items in COMING_SOON, and wherever the page says {{SOON}}. On release day, set VERSION to NEXT_VERSION and
+# empty COMING_SOON, and the marks go
+VERSION = "1.1.0"
+NEXT_VERSION = "1.2.0"
+COMING_SOON = {"sniper_rifle", "sniper_ammo", "ballistic_helmet"}
+SOON = f'<span class="soon" title="Coming in TacOps {NEXT_VERSION}">Coming soon</span>' if COMING_SOON else ""
 GEN = ROOT / "src/main/generated/data/tactical_shooter"
 ICONS = SP / "icons"
 
@@ -149,7 +157,7 @@ ITEMS = {
 SECTIONS = [
     ("weapons", "Weapons", "Every gun comes with a full magazine when you craft it.",
      ["tactical_rifle", "pistol", "shotgun", "sniper_rifle", "m80_zolja"]),
-    ("ammo", "Ammo", "Press R to reload, or pull the trigger on an empty gun. A reload uses up one magazine however many rounds were left, so don't top up after a couple of shots. The counter beside your hotbar shows the rounds in the gun and the magazines you have left.",
+    ("ammo", "Ammo", "Press R to reload, or pull the trigger on an empty gun. A reload uses up one magazine however many rounds were left, so don't top up after a couple of shots. An ammo counter beside your hotbar shows the rounds in the gun and the magazines you have left. {{SOON}}",
      ["rifle_ammo", "pistol_ammo", "12gauge_ammo", "sniper_ammo", "rocket_ammo"]),
     ("attachments", None, None,
      ["suppressor", "extended_mag", "red_dot_sight", "laser_sight", "weapon_flashlight", "full_choke", "breaching_choke"]),
@@ -288,7 +296,7 @@ def card(item_id):
         used_in.setdefault(ing, []).append(item_id)
     unlock = load_unlock(item_id)
     iron = fmt_iron(iron_cost(legend))
-    search = " ".join([name, kind] + [MATERIALS[ing][0] for _, ing, _ in legend]).lower()
+    search = " ".join([name, kind] + [MATERIALS[ing][0] for _, ing, _ in legend] + (["coming soon"] if item_id in COMING_SOON else [])).lower()
 
     slots = []
     for cell in cells:
@@ -314,7 +322,7 @@ def card(item_id):
 <article class="card" id="item-{item_id}" data-search="{esc(search)}">
   <header class="card-head">
     <span class="ico icon m-{item_id}" aria-hidden="true"></span>
-    <div><h3>{esc(name)}</h3><p class="kind">{esc(kind)}</p></div>
+    <div><h3>{esc(name)}{SOON if item_id in COMING_SOON else ""}</h3><p class="kind">{esc(kind)}</p></div>
   </header>
   <div class="bench" role="img" aria-label="Crafting recipe for {esc(name)}">
     <div class="grid">{"".join(slots)}</div>
@@ -329,7 +337,7 @@ def card(item_id):
 
 
 def chip(item_id):
-    return f'<a class="chipl" href="#item-{item_id}"><span class="ico m-{item_id}" aria-hidden="true"></span>{esc(ITEMS[item_id][0])}</a>'
+    return f'<a class="chipl" href="#item-{item_id}"><span class="ico m-{item_id}" aria-hidden="true"></span>{esc(ITEMS[item_id][0])}{SOON if item_id in COMING_SOON else ""}</a>'
 
 
 sections_html = []
@@ -353,7 +361,7 @@ for sid, title, intro, items in SECTIONS:
         <tr><th scope="row">Tactical Rifle</th><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="n">No</td></tr>
         <tr><th scope="row">Tactical Pistol</th><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="n">No</td></tr>
         <tr><th scope="row">Tactical Shotgun</th><td class="n">No</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td></tr>
-        <tr><th scope="row">M24 Sniper Rifle</th><td class="y">Yes</td><td class="y">Yes</td><td class="n">No (has its scope)</td><td class="y">Yes</td><td class="n">No</td></tr>
+        <tr><th scope="row">M24 Sniper Rifle{{SOON}}</th><td class="y">Yes</td><td class="y">Yes</td><td class="n">No (has its scope)</td><td class="y">Yes</td><td class="n">No</td></tr>
         <tr><th scope="row">M80 Zolja</th><td class="n">No</td><td class="n">No</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr>
       </tbody>
     </table>
@@ -362,7 +370,7 @@ for sid, title, intro, items in SECTIONS:
         head = '''
   <div class="sec-head">
     <h2>Upkeep and training</h2>
-    <p>Every shot costs a gun one point of durability. Guns never break, but under 20% durability each pull of the trigger has a 5% chance to jam, and a wrench shows beside the ammo counter. Press R to rack the slide and clear a jam; it uses no ammo. A Gun Cleaning Kit puts the durability back.</p>
+    <p>Every shot costs a gun one point of durability. Guns never break, but under 20% durability each pull of the trigger has a 5% chance to jam. Press R to rack the slide and clear a jam; it uses no ammo. A Gun Cleaning Kit puts the durability back. A wrench beside the ammo counter warns you once a gun is worn enough to jam. {{SOON}}</p>
   </div>'''
     else:
         head = f'''
@@ -392,7 +400,9 @@ page = (template
         .replace("{{SECTIONS}}", "\n".join(sections_html))
         .replace("{{MATERIALS}}", "\n".join(material_rows))
         .replace("{{HERO_ICONS_SLOTS}}", "".join(f'<span class="slot"><span class="ico m-{i}"></span></span>' for i in ["tactical_rifle", "pistol", "shotgun", "sniper_rifle", "m80_zolja"]))
-        .replace("{{ICON_CSS}}", icon_css))
+        .replace("{{ICON_CSS}}", icon_css)
+        .replace("{{VERSION}}", VERSION)
+        .replace("{{SOON}}", SOON))
 out = SP / "tacops-survival-guide.html"
 out.write_text(page, encoding="utf-8", newline="\n")
 print("wrote", out, len(page) // 1024, "KB")

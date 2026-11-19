@@ -11,7 +11,7 @@ SITE = Path(sys.argv[2])
 URL = "https://thedarkteri.github.io/tacops-guide/"
 TITLE = "TacOps Survival Guide"
 DESCRIPTION = "Every recipe in the TacOps mod, where to find the materials, and how to keep your guns working in survival."
-GUNS = ["tactical_rifle", "pistol", "shotgun", "m80_zolja"]
+GUNS = ["tactical_rifle", "pistol", "shotgun", "sniper_rifle", "m80_zolja"]
 
 SITE.mkdir(parents=True, exist_ok=True)
 
@@ -69,7 +69,7 @@ def font(size, weight):
     return f
 
 
-draw.text((80, 92), "TACOPS 1.1.0  ·  MINECRAFT 26.3  ·  FABRIC", font=font(26, "SemiBold"), fill=muted)
+draw.text((80, 92), "TACOPS 1.2.0  ·  MINECRAFT 26.3  ·  FABRIC", font=font(26, "SemiBold"), fill=muted)
 draw.text((76, 136), "Survival Guide", font=font(104, "Bold"), fill=ink)
 draw.rectangle((80, 268, 200, 274), fill=accent)
 draw.text((80, 300), "Every recipe, every material, and how to", font=font(36, "Regular"), fill=muted)
@@ -98,15 +98,16 @@ og.convert("RGB").save(SITE / "og.png", optimize=True)
 # GitHub Pages serves the files as they are
 (SITE / ".nojekyll").write_text("", encoding="utf-8")
 
-# What it takes to rebuild the page, kept with it
+# What it takes to rebuild the page, kept with it. Nothing to copy when it's built from the repository's own tools
 tools = SITE / "tools"
-(tools / "icons" / "vanilla").mkdir(parents=True, exist_ok=True)
-for name in ("gen_guide.py", "guide_template.html", "build_site.py"):
-    shutil.copy(SRC / name, tools / name)
-for icon in (SRC / "icons").glob("*.png"):
-    shutil.copy(icon, tools / "icons" / icon.name)
-for icon in (SRC / "icons" / "vanilla").glob("*.png"):
-    shutil.copy(icon, tools / "icons" / "vanilla" / icon.name)
+if tools.resolve() != SRC.resolve():
+    (tools / "icons" / "vanilla").mkdir(parents=True, exist_ok=True)
+    for name in ("gen_guide.py", "guide_template.html", "build_site.py"):
+        shutil.copy(SRC / name, tools / name)
+    for icon in (SRC / "icons").glob("*.png"):
+        shutil.copy(icon, tools / "icons" / icon.name)
+    for icon in (SRC / "icons" / "vanilla").glob("*.png"):
+        shutil.copy(icon, tools / "icons" / "vanilla" / icon.name)
 
 (SITE / "README.md").write_text(f'''# {TITLE}
 

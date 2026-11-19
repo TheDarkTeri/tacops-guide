@@ -47,6 +47,7 @@ MATERIALS = {
     "minecraft:lightning_rod": ("Lightning Rod", "#c77b4d", "3 copper ingots.", 0),
     "minecraft:armor_stand": ("Armor Stand", "#8b6a43", "6 sticks and a smooth stone slab.", 0),
     "minecraft:hay_block": ("Hay Bale", "#c9a33a", "9 wheat.", 0),
+    "minecraft:spyglass": ("Spyglass", "#b8743a", "2 copper ingots and an amethyst shard, from geodes.", 0),
 }
 # A tag of variants (the detonator takes any lightning rod), shown as its first
 ALIASES = {"minecraft:lightning_rod"}
@@ -65,6 +66,11 @@ ITEMS = {
         "8 pellets a shot, 3.5 damage each. 6 shells, 9 with an Extended Magazine.",
         "Loads one shell at a time: fire or aim to stop loading and shoot what's in.",
         "Blasts open wooden doors and trapdoors within 2 blocks. 600 durability."]),
+    "sniper_rifle": ("M24 Sniper Rifle", "Sniper rifle · bolt action", [
+        "5-round magazine, 8 with an Extended Magazine. 16 damage a round, 24 on a headshot.",
+        "8x scope, dead on when aimed and wild from the hip. Hold Sprint while scoped to hold your breath and steady the sway.",
+        "Rounds drop over distance: the reticle's marks show where to aim at 100, 200 and 300 blocks.",
+        "Players it's aimed at see the scope glint, from up to 256 blocks. 800 durability."]),
     "m80_zolja": ("M80 Zolja", "Rocket launcher · single shot", [
         "35 damage on a direct hit, then an explosion that blows through doors and glass.",
         "Backblast: anyone within 3 blocks behind you gets burned, and a wall right behind you hurts you.",
@@ -75,17 +81,19 @@ ITEMS = {
         "Makes 2. Each reload uses up one magazine. Stacks to 16."]),
     "12gauge_ammo": ("12 Gauge Shell", "Ammo · Tactical Shotgun", [
         "Makes 4. Each shell loads one round. Stacks to 32."]),
+    "sniper_ammo": ("7.62mm Sniper Magazine", "Ammo · M24 Sniper Rifle", [
+        "Each reload uses up one magazine. Stacks to 16."]),
     "rocket_ammo": ("64mm Rocket", "Ammo · M80 Zolja", [
         "One rocket a reload. Stacks to 8."]),
-    "suppressor": ("Suppressor", "Muzzle · rifle and pistol", [
+    "suppressor": ("Suppressor", "Muzzle · rifle, pistol, sniper", [
         "Quieter shots that carry less far, no muzzle flash, 20% less recoil."]),
-    "extended_mag": ("Extended Magazine", "Magazine · rifle, pistol, shotgun", [
-        "50% more rounds: rifle 45, pistol 18, shotgun 9 shells."]),
+    "extended_mag": ("Extended Magazine", "Magazine · rifle, pistol, shotgun, sniper", [
+        "50% more rounds: rifle 45, pistol 18, shotgun 9 shells, sniper 8."]),
     "red_dot_sight": ("Red Dot Sight", "Optic · rifle, pistol, shotgun", [
         "A 1.35x zoom with a red dot. On the rifle it replaces the 3x scope."]),
-    "laser_sight": ("Tactical Red Laser Sight", "Underbarrel · rifle, pistol, shotgun", [
+    "laser_sight": ("Tactical Red Laser Sight", "Underbarrel · rifle, pistol, shotgun, sniper", [
         "A visible beam out to 30 blocks, and 35% less spread from the hip."]),
-    "weapon_flashlight": ("Mounted Weapon Flashlight", "Underbarrel · rifle, pistol, shotgun", [
+    "weapon_flashlight": ("Mounted Weapon Flashlight", "Underbarrel · rifle, pistol, shotgun, sniper", [
         "Press F to switch it on. Lights up to 24 blocks ahead.",
         "Dazzles players within 6 blocks looking into it and blinds mobs for a moment."]),
     "full_choke": ("Full Choke", "Muzzle · shotgun only", [
@@ -106,7 +114,12 @@ ITEMS = {
         "Its plates stop 60% of gunshot damage to the upper body, and of grenade and claymore shrapnel.",
         "Head and leg hits miss the plates. 500 durability, repair with iron ingots."]),
     "nvg_helmet": ("Night Vision Goggles", "Helmet", [
-        "Press N to switch them on: night vision that never runs out. Repair with iron ingots."]),
+        "Press N to switch them on: night vision that never runs out. Repair with iron ingots.",
+        "Mount them on a Ballistic Helmet to wear both."]),
+    "ballistic_helmet": ("Ballistic Helmet", "Helmet", [
+        "Its shell stops half the damage of gunshots to the head: a sniper headshot leaves you standing.",
+        "Against anything else, as good as an iron helmet. 400 durability, repair with iron ingots.",
+        "Mount Night Vision Goggles on it: craft the two together, or right-click the goggles onto it. N switches them on as usual."]),
     "ballistic_shield": ("Ballistic Shield", "Shield", [
         "Hold right click to raise it: stops gunfire, shrapnel and projectiles from the front.",
         "Keep it in your offhand and fire a pistol past it. Two-handed guns can't fire with it.",
@@ -135,13 +148,13 @@ ITEMS = {
 
 SECTIONS = [
     ("weapons", "Weapons", "Every gun comes with a full magazine when you craft it.",
-     ["tactical_rifle", "pistol", "shotgun", "m80_zolja"]),
-    ("ammo", "Ammo", "Press R to reload, or pull the trigger on an empty gun. A reload uses up one magazine however many rounds were left, so don't top up after a couple of shots.",
-     ["rifle_ammo", "pistol_ammo", "12gauge_ammo", "rocket_ammo"]),
+     ["tactical_rifle", "pistol", "shotgun", "sniper_rifle", "m80_zolja"]),
+    ("ammo", "Ammo", "Press R to reload, or pull the trigger on an empty gun. A reload uses up one magazine however many rounds were left, so don't top up after a couple of shots. The counter beside your hotbar shows the rounds in the gun and the magazines you have left.",
+     ["rifle_ammo", "pistol_ammo", "12gauge_ammo", "sniper_ammo", "rocket_ammo"]),
     ("attachments", None, None,
      ["suppressor", "extended_mag", "red_dot_sight", "laser_sight", "weapon_flashlight", "full_choke", "breaching_choke"]),
     ("gear", "Gear", "Armour, the shield and healing.",
-     ["plate_carrier", "nvg_helmet", "ballistic_shield", "stimpack"]),
+     ["plate_carrier", "ballistic_helmet", "nvg_helmet", "ballistic_shield", "stimpack"]),
     ("explosives", "Explosives", "Grenades, mines and remote charges.",
      ["frag_grenade", "smoke_grenade", "flashbang", "claymore", "c4_charge", "remote_detonator"]),
     ("upkeep", None, None,
@@ -149,9 +162,9 @@ SECTIONS = [
 ]
 
 ORDER = [
-    ("Early", "First iron and some creeper gunpowder", ["pistol", "pistol_ammo", "frag_grenade", "plate_carrier", "suppressor"]),
+    ("Early", "First iron, leather and some creeper gunpowder", ["pistol", "pistol_ammo", "frag_grenade", "plate_carrier", "ballistic_helmet", "suppressor"]),
     ("Middle", "A steady iron supply, redstone and copper", ["tactical_rifle", "rifle_ammo", "shotgun", "12gauge_ammo", "red_dot_sight", "laser_sight", "gun_cleaning_kit", "smoke_grenade", "claymore"]),
-    ("Late", "Iron blocks, TNT, the Nether and an emerald", ["gunsmith_workbench", "ballistic_shield", "m80_zolja", "rocket_ammo", "nvg_helmet", "stimpack", "flashbang", "weapon_flashlight", "c4_charge", "remote_detonator"]),
+    ("Late", "Iron blocks, TNT, the Nether, an emerald and a spyglass", ["gunsmith_workbench", "ballistic_shield", "sniper_rifle", "sniper_ammo", "m80_zolja", "rocket_ammo", "nvg_helmet", "stimpack", "flashbang", "weapon_flashlight", "c4_charge", "remote_detonator"]),
 ]
 
 
@@ -340,6 +353,7 @@ for sid, title, intro, items in SECTIONS:
         <tr><th scope="row">Tactical Rifle</th><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="n">No</td></tr>
         <tr><th scope="row">Tactical Pistol</th><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="n">No</td></tr>
         <tr><th scope="row">Tactical Shotgun</th><td class="n">No</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td></tr>
+        <tr><th scope="row">M24 Sniper Rifle</th><td class="y">Yes</td><td class="y">Yes</td><td class="n">No (has its scope)</td><td class="y">Yes</td><td class="n">No</td></tr>
         <tr><th scope="row">M80 Zolja</th><td class="n">No</td><td class="n">No</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr>
       </tbody>
     </table>
@@ -348,7 +362,7 @@ for sid, title, intro, items in SECTIONS:
         head = '''
   <div class="sec-head">
     <h2>Upkeep and training</h2>
-    <p>Every shot costs a gun one point of durability. Guns never break, but under 20% durability each pull of the trigger has a 5% chance to jam. Press R to rack the slide and clear a jam; it uses no ammo. A Gun Cleaning Kit puts the durability back.</p>
+    <p>Every shot costs a gun one point of durability. Guns never break, but under 20% durability each pull of the trigger has a 5% chance to jam, and a wrench shows beside the ammo counter. Press R to rack the slide and clear a jam; it uses no ammo. A Gun Cleaning Kit puts the durability back.</p>
   </div>'''
     else:
         head = f'''
@@ -377,7 +391,7 @@ page = (template
         .replace("{{ORDER}}", order_html)
         .replace("{{SECTIONS}}", "\n".join(sections_html))
         .replace("{{MATERIALS}}", "\n".join(material_rows))
-        .replace("{{HERO_ICONS_SLOTS}}", "".join(f'<span class="slot"><span class="ico m-{i}"></span></span>' for i in ["tactical_rifle", "pistol", "shotgun", "m80_zolja"]))
+        .replace("{{HERO_ICONS_SLOTS}}", "".join(f'<span class="slot"><span class="ico m-{i}"></span></span>' for i in ["tactical_rifle", "pistol", "shotgun", "sniper_rifle", "m80_zolja"]))
         .replace("{{ICON_CSS}}", icon_css))
 out = SP / "tacops-survival-guide.html"
 out.write_text(page, encoding="utf-8", newline="\n")

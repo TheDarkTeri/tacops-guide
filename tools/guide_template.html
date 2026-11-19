@@ -1,0 +1,324 @@
+<title>TacOps Survival Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Field manual: a single reading column of sections, recipe cards in a wrapping grid, each recipe on an in-game crafting panel */
+:root {
+  --bg: #eceee8;
+  --panel: #f7f8f4;
+  --ink: #1c211b;
+  --muted: #5b6458;
+  --line: #cfd5c9;
+  --accent: #4d5b28;
+  --accent-soft: #dfe5cf;
+  --gui: #c6c6c6;
+  --gui-hi: #ffffff;
+  --gui-lo: #555555;
+  --slot: #8b8b8b;
+  --slot-dark: #373737;
+  --slot-light: #ffffff;
+  --count-shadow: #3f3f3f;
+  --count: #ffffff;
+  --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141815; --panel: #1d221d; --ink: #e2e6de; --muted: #98a193; --line: #323a31;
+    --accent: #a8bb72; --accent-soft: #2a3220; --gui: #b2b2b2; --gui-hi: #e4e4e4; --gui-lo: #474747;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141815; --panel: #1d221d; --ink: #e2e6de; --muted: #98a193; --line: #323a31;
+  --accent: #a8bb72; --accent-soft: #2a3220; --gui: #b2b2b2; --gui-hi: #e4e4e4; --gui-lo: #474747;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: 76px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 15px/1.55 var(--body);
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg);
+}
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: 0.01em; }
+p { margin: 0; }
+.ico { display: inline-block; flex: none; background: center / contain no-repeat; image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* Hero */
+.hero { padding-block: 40px 28px; }
+.hero-in { display: flex; flex-wrap: wrap; gap: 24px 40px; align-items: end; justify-content: space-between; }
+.hero-text { flex: 1 1 420px; min-width: 0; display: grid; gap: 12px; }
+.eyebrow { font: 500 12px/1.4 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+h1 { font-size: clamp(34px, 6vw, 52px); line-height: 1.05; font-weight: 700; }
+.lede { font-size: 17px; max-width: 60ch; color: var(--muted); }
+.hotbar { display: flex; background: var(--gui); border: 3px solid; border-color: var(--gui-hi) var(--gui-lo) var(--gui-lo) var(--gui-hi); padding: 6px; }
+.hotbar .slot { width: 72px; height: 72px; }
+.hotbar .slot .ico { width: 64px; height: 64px; }
+
+/* Sticky section bar with search */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-block: 1px solid var(--line); }
+.bar-in { display: flex; gap: 12px; align-items: center; padding-block: 10px; }
+.bar nav { display: flex; gap: 4px; overflow-x: auto; min-width: 0; flex: 1; scrollbar-width: thin; }
+.bar nav a { font: 600 14px/1 var(--display); color: var(--ink); text-decoration: none; padding: 8px 10px; border-radius: 4px; white-space: nowrap; }
+.bar nav a:hover { background: var(--accent-soft); }
+.find { flex: 0 1 280px; min-width: 150px; }
+.find input {
+  width: 100%; font: 400 14px/1.2 var(--body); color: var(--ink); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 4px; padding: 9px 10px;
+}
+@media (max-width: 720px) {
+  .bar-in { flex-wrap: wrap; }
+  .find { flex: 1 1 100%; }
+  html { scroll-padding-top: 124px; }
+}
+
+/* Sections */
+main { display: grid; gap: 56px; padding-block: 36px 64px; }
+.sec { display: grid; gap: 20px; }
+.sec-head { display: grid; gap: 6px; max-width: 72ch; }
+.sec-head h2 { font-size: 30px; font-weight: 700; }
+.sec-head p { color: var(--muted); }
+body.searching #start, body.searching #controls, body.searching .howto, body.searching .tablewrap.compatwrap, body.searching .sec-head p { display: none; }
+
+/* Start here */
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+.note { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: grid; gap: 4px; }
+.note h3 { font-size: 16px; }
+.note p { color: var(--muted); font-size: 14px; }
+.stages { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 12px; }
+.stage { display: grid; gap: 8px; align-content: start; padding: 16px; border: 1px solid var(--line); border-radius: 6px; }
+.stage h3 { font-size: 20px; }
+.stage > p { color: var(--muted); font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chipl { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 4px; background: var(--accent-soft); color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 500; }
+.chipl:hover { outline: 1px solid var(--accent); }
+.chipl .ico { width: 28px; height: 28px; }
+
+/* Recipe cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 16px; align-items: start; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: grid; gap: 14px; min-width: 0; scroll-margin-top: 80px; }
+.card:target { outline: 2px solid var(--accent); outline-offset: 2px; }
+.card-head { display: flex; gap: 12px; align-items: center; }
+.card-head .icon { width: 48px; height: 48px; flex: none; }
+.card-head h3 { font-size: 20px; line-height: 1.15; }
+.kind { font: 500 12px/1.4 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 2px; }
+
+.bench {
+  display: flex; align-items: center; gap: 12px; width: fit-content; max-width: 100%;
+  background: var(--gui); border: 3px solid; border-color: var(--gui-hi) var(--gui-lo) var(--gui-lo) var(--gui-hi); padding: 10px 14px;
+}
+.grid { display: grid; grid-template-columns: repeat(3, 40px); }
+.slot {
+  position: relative; width: 40px; height: 40px; display: grid; place-items: center;
+  background: var(--slot); border: 2px solid; border-color: var(--slot-dark) var(--slot-light) var(--slot-light) var(--slot-dark);
+}
+.slot.result { width: 56px; height: 56px; }
+.slot .ico { width: 32px; height: 32px; }
+.slot.result .ico { width: 40px; height: 40px; }
+.count { position: absolute; right: 3px; bottom: 0; font: 600 15px/1 var(--mono); color: var(--count); text-shadow: 2px 2px 0 var(--count-shadow); }
+.arrow { position: relative; width: 30px; height: 22px; flex: none; }
+.arrow::before { content: ""; position: absolute; left: 0; top: 8px; width: 16px; height: 6px; background: var(--gui-lo); }
+.arrow::after { content: ""; position: absolute; left: 15px; top: 0; border-left: 14px solid var(--gui-lo); border-block: 11px solid transparent; }
+.mat {
+  width: 28px; height: 28px; display: grid; place-items: center; background: var(--c); color: var(--t);
+  font: 600 14px/1 var(--mono);
+  box-shadow: inset 2px 2px 0 rgb(255 255 255 / 0.28), inset -2px -2px 0 rgb(0 0 0 / 0.22);
+}
+.mat.sm { width: 20px; height: 20px; font-size: 11px; flex: none; }
+
+.legend { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px 12px; font-size: 14px; }
+.legend li { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.legend .ico { width: 24px; height: 24px; }
+.legend .n { font: 500 13px/1 var(--mono); color: var(--muted); margin-left: auto; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.meta:empty { display: none; }
+.tag { font: 500 12px/1 var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 5px 9px; }
+.facts { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; }
+.facts li { position: relative; padding-left: 16px; }
+.facts li::before { content: ""; position: absolute; left: 2px; top: 0.6em; width: 6px; height: 6px; background: var(--accent); }
+.unlock { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+
+/* Attachments how-to */
+.howto { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
+.howto > div { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; display: grid; gap: 4px; }
+.howto h4 { font-size: 16px; }
+.howto p { color: var(--muted); font-size: 14px; }
+
+/* Tables */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+thead th { font: 600 12px/1.3 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); white-space: nowrap; }
+tbody th { font-weight: 600; white-space: nowrap; }
+.compat td { font-weight: 500; }
+.compat td.y { color: var(--accent); }
+.compat td.n { color: var(--muted); }
+#materials tbody th { display: flex; align-items: center; gap: 8px; }
+#materials .ico { width: 24px; height: 24px; }
+#materials td:nth-child(2) { color: var(--muted); min-width: 220px; }
+#materials td:nth-child(3) { min-width: 200px; }
+.keys td:first-child { white-space: nowrap; }
+kbd { font: 600 13px/1 var(--mono); background: var(--panel); border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 4px; padding: 3px 7px; color: var(--ink); }
+.keys-note { color: var(--muted); font-size: 14px; }
+.empty { color: var(--muted); font-size: 16px; padding: 24px 0; }
+
+footer { border-top: 1px solid var(--line); padding-block: 20px 32px; color: var(--muted); font-size: 13px; }
+</style>
+<style>{{ICON_CSS}}</style>
+
+<header class="hero">
+  <div class="wrap hero-in">
+    <div class="hero-text">
+      <p class="eyebrow">TacOps 1.1.0 · Minecraft 26.3 · Fabric</p>
+      <h1>TacOps Survival Guide</h1>
+      <p class="lede">How to craft every gun, round, attachment and gadget in survival, what the materials are, and how to keep your guns working.</p>
+    </div>
+    <div class="hotbar" aria-hidden="true">
+      {{HERO_ICONS_SLOTS}}
+    </div>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="wrap bar-in">
+    <nav aria-label="Sections">
+      <a href="#start">Start</a>
+      <a href="#weapons">Weapons</a>
+      <a href="#ammo">Ammo</a>
+      <a href="#attachments">Attachments</a>
+      <a href="#gear">Gear</a>
+      <a href="#explosives">Explosives</a>
+      <a href="#upkeep">Upkeep</a>
+      <a href="#materials">Materials</a>
+      <a href="#controls">Controls</a>
+    </nav>
+    <label class="find">
+      <span class="eyebrow" style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)">Find an item or ingredient</span>
+      <input id="find" type="search" placeholder="Find an item or ingredient, e.g. copper" autocomplete="off">
+    </label>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="sec" id="start">
+    <div class="sec-head">
+      <h2>Start here</h2>
+      <p>Everything in TacOps is made on an ordinary crafting table from vanilla materials. No new ores, no new mobs.</p>
+    </div>
+    <div class="notes">
+      <div class="note"><h3>Iron first</h3><p>Nearly every recipe needs iron. Gunpowder comes next, so don't run from creepers.</p></div>
+      <div class="note"><h3>Recipe book</h3><p>Recipes show up in your recipe book as you pick up their materials. You can craft any of them as soon as you have the ingredients.</p></div>
+      <div class="note"><h3>Magazines</h3><p>Guns reload from magazines in your inventory or offhand. No magazine, no reload. New guns come loaded.</p></div>
+      <div class="note"><h3>Keep them clean</h3><p>Guns wear with every shot and start jamming when worn. Craft a few cleaning kits.</p></div>
+    </div>
+    <div class="sec-head">
+      <h2>A good order to craft things</h2>
+      <p>A suggestion, going by what the materials take to find.</p>
+    </div>
+    <div class="stages">{{ORDER}}</div>
+  </section>
+
+  {{SECTIONS}}
+
+  <section class="sec" id="materials">
+    <div class="sec-head">
+      <h2>Materials</h2>
+      <p>Every vanilla ingredient the mod's recipes use, how to get it, and what it goes into. Most-used first.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th scope="col">Ingredient</th><th scope="col">How to get it</th><th scope="col">Used in</th></tr></thead>
+        <tbody>
+{{MATERIALS}}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="controls">
+    <div class="sec-head">
+      <h2>Controls</h2>
+      <p class="keys-note">All TacOps keys can be changed in Options → Controls, under TacOps.</p>
+    </div>
+    <div class="tablewrap">
+      <table class="keys">
+        <thead><tr><th scope="col">Key</th><th scope="col">What it does</th></tr></thead>
+        <tbody>
+          <tr><td>Left click</td><td>Fire</td></tr>
+          <tr><td>Right click</td><td>Aim down the sights, raise the shield, inject a stimpack, or pull a grenade's pin (release to throw)</td></tr>
+          <tr><td><kbd>R</kbd></td><td>Reload, or rack the slide to clear a jam</td></tr>
+          <tr><td><kbd>Q</kbd> / <kbd>E</kbd></td><td>Lean left / right around corners</td></tr>
+          <tr><td><kbd>F</kbd></td><td>Weapon flashlight on or off, while holding a gun with one. Otherwise it swaps hands as usual</td></tr>
+          <tr><td><kbd>N</kbd></td><td>Night vision goggles on or off</td></tr>
+          <tr><td>Sneak + right click</td><td>Clean the gun in your hand with a kit in your offhand, or defuse a claymore. Sneak while throwing to lob a grenade</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="empty" id="empty" hidden>Nothing matches that. Try an item name like "shotgun" or an ingredient like "redstone".</p>
+</main>
+
+<footer>
+  <div class="wrap">Written for TacOps 1.1.0 on Minecraft 26.3 (Fabric). The recipes are taken straight from the mod's files. Get the mod on <a href="https://modrinth.com/mod/tacops">Modrinth</a>.</div>
+</footer>
+
+<script>
+(function () {
+  var input = document.getElementById("find");
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
+  var rows = Array.prototype.slice.call(document.querySelectorAll("#materials tbody tr"));
+  var sections = Array.prototype.slice.call(document.querySelectorAll(".sec"));
+  var materials = document.getElementById("materials");
+  var empty = document.getElementById("empty");
+
+  function run() {
+    var words = input.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    var searching = words.length > 0;
+    var matches = function (el) {
+      var text = el.getAttribute("data-search") || "";
+      return words.every(function (w) { return text.indexOf(w) !== -1; });
+    };
+    document.body.classList.toggle("searching", searching);
+
+    var anyCard = false;
+    cards.forEach(function (card) {
+      var show = !searching || matches(card);
+      card.hidden = !show;
+      if (show) anyCard = true;
+    });
+    sections.forEach(function (sec) {
+      if (sec.id === "start" || sec.id === "controls" || sec.id === "materials") return;
+      sec.hidden = searching && !sec.querySelector(".card:not([hidden])");
+    });
+    var anyRow = false;
+    rows.forEach(function (row) {
+      var show = !searching || matches(row);
+      row.hidden = !show;
+      if (show) anyRow = true;
+    });
+    materials.hidden = searching && !anyRow;
+    empty.hidden = !searching || anyCard || anyRow;
+  }
+
+  input.addEventListener("input", run);
+})();
+</script>

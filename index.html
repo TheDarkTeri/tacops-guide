@@ -100,10 +100,14 @@ h1 { font-size: clamp(34px, 6vw, 52px); line-height: 1.05; font-weight: 700; }
 /* Sticky section bar with search */
 .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-block: 1px solid var(--line); }
 .bar-in { display: flex; gap: 12px; align-items: center; padding-block: 10px; }
-.bar nav { display: flex; gap: 4px; overflow-x: auto; min-width: 0; flex: 1; scrollbar-width: thin; }
-.bar nav a { font: 600 14px/1 var(--display); color: var(--ink); text-decoration: none; padding: 8px 10px; border-radius: 4px; white-space: nowrap; }
+.bar nav { display: flex; gap: 2px; overflow-x: auto; min-width: 0; flex: 1; scrollbar-width: thin; }
+.bar nav a { font: 600 14px/1 var(--display); color: var(--ink); text-decoration: none; padding: 8px; border-radius: 4px; white-space: nowrap; }
 .bar nav a:hover { background: var(--accent-soft); }
-.find { flex: 0 1 280px; min-width: 150px; }
+/* When the links don't all fit, the side with more to scroll to fades out */
+.bar nav.more-right { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+.bar nav.more-left { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to left, #000 calc(100% - 40px), transparent); }
+.bar nav.more-left.more-right { -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent); }
+.find { flex: 0 1 260px; min-width: 150px; }
 .find input {
   width: 100%; font: 400 14px/1.2 var(--body); color: var(--ink); background: var(--panel);
   border: 1px solid var(--line); border-radius: 4px; padding: 9px 10px;
@@ -914,6 +918,18 @@ footer { border-top: 1px solid var(--line); padding-block: 20px 32px; color: var
   }
 
   input.addEventListener("input", run);
+
+  // Fade whichever end of the section links has more to scroll to
+  var nav = document.querySelector(".bar nav");
+  function edges() {
+    var more = nav.scrollWidth - nav.clientWidth;
+    nav.classList.toggle("more-left", more > 1 && nav.scrollLeft > 1);
+    nav.classList.toggle("more-right", more > 1 && nav.scrollLeft < more - 1);
+  }
+  nav.addEventListener("scroll", edges, { passive: true });
+  window.addEventListener("resize", edges);
+  if (document.fonts) document.fonts.ready.then(edges);
+  edges();
 })();
 </script>
 </body>

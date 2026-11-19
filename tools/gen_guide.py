@@ -19,6 +19,12 @@ VERSION = "1.1.0"
 NEXT_VERSION = "1.2.0"
 COMING_SOON = {"sniper_rifle", "sniper_ammo", "ballistic_helmet"}
 SOON = f'<span class="soon" title="Coming in TacOps {NEXT_VERSION}">Coming soon</span>' if COMING_SOON else ""
+# Sentences in a section's introduction about what's only in the next release: each on a line of its own, led by the
+# mark, so it's clear the rest of the section is out already
+SECTION_NOTES = {
+    "ammo": "An ammo counter beside your hotbar shows the rounds in the gun and the magazines you have left.",
+    "upkeep": "A wrench beside the ammo counter warns you once a gun is worn enough to jam.",
+}
 GEN = ROOT / "src/main/generated/data/tactical_shooter"
 ICONS = SP / "icons"
 
@@ -157,7 +163,7 @@ ITEMS = {
 SECTIONS = [
     ("weapons", "Weapons", "Every gun comes with a full magazine when you craft it.",
      ["tactical_rifle", "pistol", "shotgun", "sniper_rifle", "m80_zolja"]),
-    ("ammo", "Ammo", "Press R to reload, or pull the trigger on an empty gun. A reload uses up one magazine however many rounds were left, so don't top up after a couple of shots. An ammo counter beside your hotbar shows the rounds in the gun and the magazines you have left. {{SOON}}",
+    ("ammo", "Ammo", "Press R to reload, or pull the trigger on an empty gun. A reload uses up one magazine however many rounds were left, so don't top up after a couple of shots.",
      ["rifle_ammo", "pistol_ammo", "12gauge_ammo", "sniper_ammo", "rocket_ammo"]),
     ("attachments", None, None,
      ["suppressor", "extended_mag", "red_dot_sight", "laser_sight", "weapon_flashlight", "full_choke", "breaching_choke"]),
@@ -370,7 +376,7 @@ for sid, title, intro, items in SECTIONS:
         head = '''
   <div class="sec-head">
     <h2>Upkeep and training</h2>
-    <p>Every shot costs a gun one point of durability. Guns never break, but under 20% durability each pull of the trigger has a 5% chance to jam. Press R to rack the slide and clear a jam; it uses no ammo. A Gun Cleaning Kit puts the durability back. A wrench beside the ammo counter warns you once a gun is worn enough to jam. {{SOON}}</p>
+    <p>Every shot costs a gun one point of durability. Guns never break, but under 20% durability each pull of the trigger has a 5% chance to jam. Press R to rack the slide and clear a jam; it uses no ammo. A Gun Cleaning Kit puts the durability back.</p>
   </div>'''
     else:
         head = f'''
@@ -378,6 +384,8 @@ for sid, title, intro, items in SECTIONS:
     <h2>{esc(title)}</h2>
     <p>{esc(intro)}</p>
   </div>'''
+    if sid in SECTION_NOTES:
+        head = head.replace("\n  </div>", f'\n    <p class="upcoming">{SOON}{esc(SECTION_NOTES[sid])}</p>\n  </div>', 1)
     sections_html.append(f'<section class="sec" id="{sid}">{head}<div class="cards">{cards}</div></section>')
 
 order_html = "".join(

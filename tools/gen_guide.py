@@ -15,9 +15,9 @@ SP = Path(sys.argv[2])
 # The TacOps version that's out, and the next one. What's only in the next one is in the guide already, marked "Coming
 # soon": the items in COMING_SOON, and wherever the page says {{SOON}}. On release day, set VERSION to NEXT_VERSION and
 # empty COMING_SOON, and the marks go
-VERSION = "1.1.0"
-NEXT_VERSION = "1.2.0"
-COMING_SOON = {"sniper_rifle", "sniper_ammo", "ballistic_helmet"}
+VERSION = "1.2.0"
+NEXT_VERSION = "1.3.0"
+COMING_SOON = set()
 SOON = f'<span class="soon" title="Coming in TacOps {NEXT_VERSION}">Coming soon</span>' if COMING_SOON else ""
 # Sentences in a section's introduction about what's only in the next release: each on a line of its own, led by the
 # mark, so it's clear the rest of the section is out already
